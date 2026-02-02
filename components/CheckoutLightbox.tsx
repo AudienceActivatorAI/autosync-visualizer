@@ -358,7 +358,7 @@ export default function CheckoutLightbox({
                 {step === "summary" && "REVIEW CART"}
                 {step === "shipping" && "SHIPPING DETAILS"}
                 {step === "payment" && "PAYMENT METHOD"}
-                {step === "financing" && "KATAPULT FINANCING"}
+                {step === "financing" && "LENDPRO FINANCING"}
               </h2>
             </div>
 
@@ -405,7 +405,7 @@ export default function CheckoutLightbox({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
                   <Button
                     size="lg"
-                    className="h-16 text-lg font-bold bg-red-600 hover:bg-red-600/90 shadow-lg shadow-katapult-pink/20"
+                    className="h-16 text-lg font-bold bg-red-600 hover:bg-red-600/90 shadow-lg"
                     onClick={handleNext}
                   >
                     SECURE CHECKOUT <ChevronRight className="ml-2 w-5 h-5" />
