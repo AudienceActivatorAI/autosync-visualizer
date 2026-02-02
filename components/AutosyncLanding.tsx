@@ -285,6 +285,7 @@ export default function AutosyncLanding() {
         key: AUTOSYNC_KEY,
         adaptiveHeight: false,
         disableQuoteForm: true, // Disable Autosync's form - we show LendPro directly
+        disableCart: true, // Disable Autosync's built-in cart
         homeStyle: null,
         productSegment: ['vehicles', 'wheels', 'tires'],
         scrollBar: false,
@@ -306,14 +307,22 @@ export default function AutosyncLanding() {
             }
           }
           
-          // When user submits quote OR clicks BUY, show payment selection
-          if (event === 'submitQuote' || event === 'buy' || event === 'buyClick' || event === 'addToCart') {
-            console.log('[Autosync] Quote/BUY event detected - showing payment selection');
+          // When user submits quote OR clicks BUY, open our checkout flow
+          // Ignore addToCart events - we handle checkout ourselves
+          if (event === 'submitQuote' || event === 'buy' || event === 'buyClick') {
+            console.log('[Autosync] Quote/BUY event detected - opening checkout flow');
             // Use the data from the event or stored selection
             if (data && (data.wheels || data.tires)) {
               currentSelectionRef.current = data;
             }
             handleBuyClick();
+          }
+          
+          // Prevent Autosync's cart from showing
+          if (event === 'addToCart' || event === 'cartUpdate' || event === 'showCart') {
+            console.log('[Autosync] Cart event intercepted - using our checkout flow instead');
+            // Don't let Autosync show its cart - we handle checkout
+            return;
           }
         },
       });
