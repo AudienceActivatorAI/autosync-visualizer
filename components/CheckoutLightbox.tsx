@@ -29,6 +29,7 @@ export default function CheckoutLightbox({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [launchURL, setLaunchURL] = useState<string | null>(null);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
     lastName: "",
@@ -49,6 +50,7 @@ export default function CheckoutLightbox({
     if (!isOpen) {
       setStep("summary");
       setLaunchURL(null);
+      setIsIframeLoading(false);
       setShippingInfo({
         firstName: "",
         lastName: "",
@@ -213,9 +215,10 @@ export default function CheckoutLightbox({
       
       console.log('[Checkout] Financing launched successfully:', result);
       console.log('[Checkout] Launch URL:', result.launchURL);
-      
+
       // Store launch URL and move to financing step
       setLaunchURL(result.launchURL);
+      setIsIframeLoading(true); // Start loading state for iframe
       setStep("financing");
       toast.success("Connected to Autosync financing");
     } catch (error: any) {
@@ -763,16 +766,17 @@ export default function CheckoutLightbox({
             {step === "financing" && (
               <div className="h-full flex flex-col animate-in slide-in-from-right-10 duration-300">
                 <div className="flex-1 bg-white rounded-lg overflow-hidden border border-white/20 relative shadow-inner">
-                  {isSubmitting || !launchURL ? (
+                  {isSubmitting || !launchURL || isIframeLoading ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-white/10">
                       <div className="text-center space-y-4">
                         <Loader2 className="animate-spin w-12 h-12 text-red-600 mx-auto" />
                         <p className="font-medium text-lg text-gray-900">
-                          Connecting to LendPro Secure Server...
+                          {isIframeLoading ? 'Loading LendPro Application...' : 'Connecting to LendPro Secure Server...'}
                         </p>
                       </div>
                     </div>
-                  ) : (
+                  ) : null}
+                  {launchURL && (
                     <iframe
                       src={launchURL}
                       className="w-full h-full relative z-10 bg-white"
@@ -780,9 +784,11 @@ export default function CheckoutLightbox({
                       allow="payment; geolocation; camera; microphone"
                       onLoad={() => {
                         console.log('[Checkout] Iframe loaded successfully');
+                        setIsIframeLoading(false);
                       }}
                       onError={(e) => {
                         console.error('[Checkout] Iframe failed to load:', e);
+                        setIsIframeLoading(false);
                       }}
                     />
                   )}
