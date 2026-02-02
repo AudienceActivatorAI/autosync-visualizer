@@ -777,10 +777,12 @@ export default function CheckoutLightbox({
                       src={launchURL}
                       className="w-full h-full relative z-10 bg-white"
                       title="LendPro Financing Application"
-                      allow="payment; geolocation"
-                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                      onError={() => {
-                        console.error('[Checkout] Iframe failed to load');
+                      allow="payment; geolocation; camera; microphone"
+                      onLoad={() => {
+                        console.log('[Checkout] Iframe loaded successfully');
+                      }}
+                      onError={(e) => {
+                        console.error('[Checkout] Iframe failed to load:', e);
                       }}
                     />
                   )}

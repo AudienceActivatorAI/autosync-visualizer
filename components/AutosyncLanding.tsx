@@ -406,8 +406,11 @@ export default function AutosyncLanding() {
 
       const buttons = container.querySelectorAll('button');
       buttons.forEach((button) => {
-        if (button.textContent?.includes('REQUEST A QUOTE')) {
+        const text = button.textContent?.trim().toUpperCase();
+        if (text?.includes('REQUEST') && text?.includes('QUOTE')) {
+          console.log('[Autosync] Changing button text from:', button.textContent);
           button.textContent = 'BUY';
+          button.innerHTML = 'BUY';
         }
       });
     };
