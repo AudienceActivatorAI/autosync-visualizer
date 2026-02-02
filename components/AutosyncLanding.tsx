@@ -387,18 +387,37 @@ export default function AutosyncLanding() {
         initAutosync();
       }
     };
-    
+
     // Check immediately
     checkAndInit();
-    
+
     // Also check after a short delay in case script loads between renders
     const timeout = setTimeout(checkAndInit, 1000);
-    
+
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Change "REQUEST A QUOTE" buttons to "BUY"
+  useEffect(() => {
+    const changeButtonText = () => {
+      const container = document.getElementById(AUTOSYNC_CONTAINER_ID);
+      if (!container) return;
 
+      const buttons = container.querySelectorAll('button');
+      buttons.forEach((button) => {
+        if (button.textContent?.includes('REQUEST A QUOTE')) {
+          button.textContent = 'BUY';
+        }
+      });
+    };
+
+    // Run immediately and then periodically to catch dynamically loaded buttons
+    changeButtonText();
+    const interval = setInterval(changeButtonText, 500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <main className="min-h-screen bg-white text-gray-900">

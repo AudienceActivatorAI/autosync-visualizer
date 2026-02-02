@@ -18,6 +18,21 @@
   display: none !important;
 }
 
+/* Change "REQUEST A QUOTE" button text to "BUY" */
+/* Target buttons with specific styling that match the quote buttons */
+#autosync-visualizer button[style*="background"] {
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+#autosync-visualizer button[style*="background"]::after {
+  font-size: 14px !important;
+  line-height: normal !important;
+  content: "BUY" !important;
+  font-weight: bold !important;
+  display: inline-block !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
