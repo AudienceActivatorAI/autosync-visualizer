@@ -4,8 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Visualizer & Lease-to-Own — Brought to you by Autosync",
-  description:
-    "Visualize tires & wheels on your vehicle, then see Lease-to-Own options brought to you by Autosync.",
+  description: "Autosync visualizer plus cart",
 };
 
 export default function RootLayout({
