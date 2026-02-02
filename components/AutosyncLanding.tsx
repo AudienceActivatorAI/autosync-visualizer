@@ -66,10 +66,8 @@ export default function AutosyncLanding() {
           const quantity = tire.quantity || 4;
           totalAmount += price * quantity;
 
-          // Try multiple possible image property names from Autosync
-          const tireImage = tire.image || tire.imageUrl || tire.imageURL ||
-                           tire.imgUrl || tire.img || tire.thumbnailUrl ||
-                           tire.thumbnail || tire.productImage || '';
+          // Use Autosync's tire image properties (imgAngle is the primary angled view)
+          const tireImage = tire.imgAngle || tire.imgFront || tire.imgSideId || '';
 
           console.log('[Autosync] Tire image URL:', tireImage, 'for tire:', tire.partNumber);
 
@@ -94,10 +92,8 @@ export default function AutosyncLanding() {
           const quantity = wheel.quantity || 4;
           totalAmount += price * quantity;
 
-          // Try multiple possible image property names from Autosync
-          const wheelImage = wheel.image || wheel.imageUrl || wheel.imageURL ||
-                            wheel.imgUrl || wheel.img || wheel.thumbnailUrl ||
-                            wheel.thumbnail || wheel.productImage || '';
+          // Use Autosync's wheel image properties (img001 is the primary image)
+          const wheelImage = wheel.img001 || wheel.img002 || wheel.img003 || '';
 
           console.log('[Autosync] Wheel image URL:', wheelImage, 'for wheel:', wheel.partNumber);
 
