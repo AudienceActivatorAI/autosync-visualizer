@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide Autosync's submit order page and cart elements */
+#autosync-visualizer [class*="submit"],
+#autosync-visualizer [class*="order"],
+#autosync-visualizer [class*="checkout"],
+#autosync-visualizer [id*="submit"],
+#autosync-visualizer [id*="order"],
+#autosync-visualizer [id*="checkout"] {
+  display: none !important;
+}
+
+/* Hide Autosync cart UI if it appears */
+#autosync-visualizer [class*="cart"],
+#autosync-visualizer [id*="cart"] {
+  display: none !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
