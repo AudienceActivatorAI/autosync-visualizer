@@ -28,6 +28,6 @@ export interface CheckoutData {
     year: number;
     make: string;
     model: string;
-  };
+  } | null;
   total: number;
 }

@@ -4,9 +4,11 @@ import Script from "next/script";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import PreApprovalModal from "@/components/PreApprovalModal";
+import CheckoutLightbox from "@/components/CheckoutLightbox";
 import { toast } from "sonner";
 import { apiService } from "@/services/api";
 import { launchFinancing } from "@/services/lendproService";
+import type { CheckoutData } from "@/types";
 
 declare global {
   interface Window {
@@ -22,6 +24,7 @@ export default function AutosyncLanding() {
   const [ready, setReady] = useState(false);
   const [paymentSelectionOpen, setPaymentSelectionOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutCartData, setCheckoutCartData] = useState<CheckoutData | null>(null);
   const [preApprovalOpen, setPreApprovalOpen] = useState(false);
   const [launchURL, setLaunchURL] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,9 +32,9 @@ export default function AutosyncLanding() {
   const initialized = useRef(false);
   const currentSelectionRef = useRef<any>(null); // Store current product selection
 
-  // Show payment selection when BUY is clicked
+  // Show checkout flow when BUY is clicked
   const handleBuyClick = useCallback(async () => {
-    console.log("[Autosync] BUY clicked - showing payment selection");
+    console.log("[Autosync] BUY clicked - opening checkout flow");
     
     try {
       // Get current selection from Autosync
@@ -51,8 +54,65 @@ export default function AutosyncLanding() {
         return;
       }
       
-      // Show payment method selection
-      setPaymentSelectionOpen(true);
+      // Calculate total and prepare cart data
+      let totalAmount = 0;
+      const products: any[] = [];
+      
+      // Process Tires
+      if (data.tires && Array.isArray(data.tires)) {
+        for (const tire of data.tires) {
+          const price = await apiService.getProductPrice(tire.partNumber, 'tire');
+          const quantity = tire.quantity || 4;
+          totalAmount += price * quantity;
+          
+          products.push({
+            id: `tire-${tire.partNumber}`,
+            name: `${tire.brand || ''} ${tire.model || tire.partNumber}`,
+            sku: tire.partNumber,
+            price: price,
+            quantity: quantity,
+            image: tire.image || '',
+            type: 'tire',
+            description: `${tire.width}/${tire.ratio}R${tire.diameter}`,
+          });
+        }
+      }
+
+      // Process Wheels
+      if (data.wheels && Array.isArray(data.wheels)) {
+        for (const wheel of data.wheels) {
+          const price = await apiService.getProductPrice(wheel.partNumber, 'wheel');
+          const quantity = wheel.quantity || 4;
+          totalAmount += price * quantity;
+          
+          products.push({
+            id: `wheel-${wheel.partNumber}`,
+            name: `${wheel.brand || ''} ${wheel.model || wheel.partNumber}`,
+            sku: wheel.partNumber,
+            price: price,
+            quantity: quantity,
+            image: wheel.image || '',
+            type: 'wheel',
+            description: `${wheel.diameter}x${wheel.width}`,
+          });
+        }
+      }
+      
+      // Open checkout lightbox with review cart step
+      setCheckoutCartData({
+        vehicle: data.vehicle ? {
+          year: data.vehicle.year || 2025,
+          make: data.vehicle.make || '',
+          model: data.vehicle.model || '',
+        } : {
+          year: 2025,
+          make: '',
+          model: '',
+        },
+        products: products,
+        total: totalAmount,
+      });
+      setCheckoutOpen(true);
     } catch (error) {
       console.error("[Autosync] Error handling BUY click:", error);
       toast.error('Please try selecting products first.');
@@ -420,36 +480,16 @@ export default function AutosyncLanding() {
         </div>
       )}
 
-      {/* LendPro Financing Lightbox - Mobile responsive */}
-      {checkoutOpen && launchURL && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm">
-          <div className="fixed inset-0 sm:inset-4 md:inset-8 lg:inset-16 bg-white rounded-none sm:rounded-lg shadow-2xl overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-red-600">
-              <h2 className="text-lg sm:text-xl font-bold text-white">LendPro Financing</h2>
-              <button
-                onClick={() => {
-                  setCheckoutOpen(false);
-                  setLaunchURL(null);
-                }}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </button>
-            </div>
-            
-            {/* LendPro iframe - Mobile responsive */}
-            <div className="flex-1 relative">
-              <iframe
-                src={launchURL}
-                className="absolute inset-0 w-full h-full border-0"
-                title="LendPro Financing Application"
-                allow="payment"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Checkout Lightbox - Multi-step checkout flow */}
+      <CheckoutLightbox
+        isOpen={checkoutOpen}
+        onClose={() => {
+          setCheckoutOpen(false);
+          setCheckoutCartData(null);
+          setLaunchURL(null);
+        }}
+        cartData={checkoutCartData}
+      />
       
       {/* Loading overlay during submission */}
       {isSubmitting && (

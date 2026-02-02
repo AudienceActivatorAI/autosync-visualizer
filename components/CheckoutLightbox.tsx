@@ -270,7 +270,7 @@ export default function CheckoutLightbox({
               ORDER SUMMARY
             </h2>
             <p className="text-sm text-gray-900/70 mt-1">
-              {cartData.vehicle
+              {cartData.vehicle && cartData.vehicle.make
                 ? `${cartData.vehicle.year} ${cartData.vehicle.make} ${cartData.vehicle.model}`
                 : "Vehicle Selection"}
             </p>
@@ -691,53 +691,64 @@ export default function CheckoutLightbox({
                   </TabsContent>
 
                   <TabsContent value="financing" className="space-y-6">
-                    <Card className="border-red-600/50 bg-red-600/10 overflow-hidden">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div className="flex justify-center mb-6">
-                          <div className="bg-white/10 rounded-lg p-8">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                              Autosync Financing
-                            </h3>
-                            <p className="text-gray-900/80">
-                              See if You Pre-Qualify
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-gray-900/70">
-                          Get approved instantly with no impact to your credit
-                          score. Flexible payment plans available.
-                        </p>
-                        <ul className="text-left space-y-2 text-sm my-6 max-w-xs mx-auto text-gray-900/80">
-                          <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                            Instant decision
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                            No hidden fees
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                            0% APR options available
-                          </li>
-                        </ul>
-                        <Button
-                          size="lg"
-                          className="w-full font-bold text-lg bg-red-600 hover:bg-red-600/90"
+                    <div className="flex flex-col items-center space-y-6">
+                      {/* Pre-Qualify Button Card */}
+                      <div className="w-full max-w-md">
+                        <button
                           onClick={startFinancing}
                           disabled={isSubmitting}
+                          className="w-full p-6 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center gap-3 text-white"
                         >
-                          {isSubmitting ? (
-                            <>
-                              <Loader2 className="animate-spin mr-2 w-5 h-5" />
-                              CONNECTING...
-                            </>
-                          ) : (
-                            "APPLY NOW"
-                          )}
-                        </Button>
-                      </CardContent>
-                    </Card>
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold text-lg">LP</span>
+                            </div>
+                            <span className="text-lg font-bold">See if You Pre-Qualify</span>
+                          </div>
+                          <span className="text-sm text-white/90 font-normal">
+                            Multiple Providers • Regardless of Credit
+                          </span>
+                        </button>
+                      </div>
+                      
+                      {/* Description */}
+                      <p className="text-gray-900/70 text-center max-w-md">
+                        Get approved instantly with no impact to your credit score. Flexible payment plans available.
+                      </p>
+                      
+                      {/* Benefits List */}
+                      <ul className="text-left space-y-2 text-sm max-w-xs mx-auto text-gray-900/80">
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                          Instant decision
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                          No hidden fees
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                          0% APR options available
+                        </li>
+                      </ul>
+                      
+                      {/* Apply Now Button */}
+                      <Button
+                        size="lg"
+                        className="w-full max-w-md font-bold text-lg bg-red-600 hover:bg-red-600/90"
+                        onClick={startFinancing}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="animate-spin mr-2 w-5 h-5" />
+                            CONNECTING...
+                          </>
+                        ) : (
+                          "APPLY NOW"
+                        )}
+                      </Button>
+                    </div>
                   </TabsContent>
                 </Tabs>
               </div>
