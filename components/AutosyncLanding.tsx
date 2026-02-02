@@ -61,17 +61,25 @@ export default function AutosyncLanding() {
       // Process Tires
       if (data.tires && Array.isArray(data.tires)) {
         for (const tire of data.tires) {
+          console.log('[Autosync] Full tire object:', tire);
           const price = await apiService.getProductPrice(tire.partNumber, 'tire');
           const quantity = tire.quantity || 4;
           totalAmount += price * quantity;
-          
+
+          // Try multiple possible image property names from Autosync
+          const tireImage = tire.image || tire.imageUrl || tire.imageURL ||
+                           tire.imgUrl || tire.img || tire.thumbnailUrl ||
+                           tire.thumbnail || tire.productImage || '';
+
+          console.log('[Autosync] Tire image URL:', tireImage, 'for tire:', tire.partNumber);
+
           products.push({
             id: `tire-${tire.partNumber}`,
             name: `${tire.brand || ''} ${tire.model || tire.partNumber}`,
             sku: tire.partNumber,
             price: price,
             quantity: quantity,
-            image: tire.image || '',
+            image: tireImage,
             type: 'tire',
             description: `${tire.width}/${tire.ratio}R${tire.diameter}`,
           });
@@ -81,17 +89,25 @@ export default function AutosyncLanding() {
       // Process Wheels
       if (data.wheels && Array.isArray(data.wheels)) {
         for (const wheel of data.wheels) {
+          console.log('[Autosync] Full wheel object:', wheel);
           const price = await apiService.getProductPrice(wheel.partNumber, 'wheel');
           const quantity = wheel.quantity || 4;
           totalAmount += price * quantity;
-          
+
+          // Try multiple possible image property names from Autosync
+          const wheelImage = wheel.image || wheel.imageUrl || wheel.imageURL ||
+                            wheel.imgUrl || wheel.img || wheel.thumbnailUrl ||
+                            wheel.thumbnail || wheel.productImage || '';
+
+          console.log('[Autosync] Wheel image URL:', wheelImage, 'for wheel:', wheel.partNumber);
+
           products.push({
             id: `wheel-${wheel.partNumber}`,
             name: `${wheel.brand || ''} ${wheel.model || wheel.partNumber}`,
             sku: wheel.partNumber,
             price: price,
             quantity: quantity,
-            image: wheel.image || '',
+            image: wheelImage,
             type: 'wheel',
             description: `${wheel.diameter}x${wheel.width}`,
           });
