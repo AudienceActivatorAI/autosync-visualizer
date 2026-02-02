@@ -187,50 +187,83 @@ export default function AutosyncLanding() {
 
   // Initialize the widget after the script loads
   const initAutosync = useCallback(() => {
-    if (initialized.current) return;
-    if (!window.Autosync) return;
-
-    initialized.current = true;
-
-    window.autosyncInstance = new window.Autosync({
-      id: AUTOSYNC_CONTAINER_ID,
-      key: AUTOSYNC_KEY,
-      adaptiveHeight: false,
-      disableQuoteForm: true, // Disable Autosync's form - we show LendPro directly
-      homeStyle: null,
-      productSegment: ['vehicles', 'wheels', 'tires'],
-      scrollBar: false,
-      startPage: null,
-      widget: false,
-      onEvent: function({ event, data }: { event: string, data: any }) {
-        console.log('[Autosync] AutoSync Event:', event, data);
-        console.log('[Autosync] API Key:', AUTOSYNC_KEY);
-        console.log('[Autosync] Product Segment:', ['vehicles', 'wheels', 'tires']);
-        
-        // Store product selection data when products are selected
-        if (data && (data.wheels || data.tires || data.vehicle)) {
-          currentSelectionRef.current = data;
-          console.log('[Autosync] Stored selection:', data);
-          if (data.tires) {
-            console.log('[Autosync] Tires found:', data.tires);
-          } else {
-            console.log('[Autosync] No tires in selection data');
+    try {
+      console.log('[Autosync] initAutosync called');
+      console.log('[Autosync] initialized.current:', initialized.current);
+      console.log('[Autosync] window.Autosync:', typeof window.Autosync);
+      
+      if (initialized.current) {
+        console.log('[Autosync] Already initialized, skipping');
+        return;
+      }
+      
+      if (!window.Autosync) {
+        console.warn('[Autosync] Autosync not available yet, will retry');
+        // Retry after a short delay
+        setTimeout(() => {
+          if (window.Autosync && !initialized.current) {
+            initAutosync();
           }
-        }
-        
-        // When user submits quote OR clicks BUY, show payment selection
-        if (event === 'submitQuote' || event === 'buy' || event === 'buyClick' || event === 'addToCart') {
-          console.log('[Autosync] Quote/BUY event detected - showing payment selection');
-          // Use the data from the event or stored selection
-          if (data && (data.wheels || data.tires)) {
+        }, 500);
+        return;
+      }
+
+      console.log('[Autosync] Initializing Autosync with key:', AUTOSYNC_KEY);
+      console.log('[Autosync] Container ID:', AUTOSYNC_CONTAINER_ID);
+      
+      // Check if container exists
+      const container = document.getElementById(AUTOSYNC_CONTAINER_ID);
+      if (!container) {
+        console.error('[Autosync] Container not found:', AUTOSYNC_CONTAINER_ID);
+        return;
+      }
+
+      initialized.current = true;
+
+      window.autosyncInstance = new window.Autosync({
+        id: AUTOSYNC_CONTAINER_ID,
+        key: AUTOSYNC_KEY,
+        adaptiveHeight: false,
+        disableQuoteForm: true, // Disable Autosync's form - we show LendPro directly
+        homeStyle: null,
+        productSegment: ['vehicles', 'wheels', 'tires'],
+        scrollBar: false,
+        startPage: null,
+        widget: false,
+        onEvent: function({ event, data }: { event: string, data: any }) {
+          console.log('[Autosync] AutoSync Event:', event, data);
+          console.log('[Autosync] API Key:', AUTOSYNC_KEY);
+          console.log('[Autosync] Product Segment:', ['vehicles', 'wheels', 'tires']);
+          
+          // Store product selection data when products are selected
+          if (data && (data.wheels || data.tires || data.vehicle)) {
             currentSelectionRef.current = data;
+            console.log('[Autosync] Stored selection:', data);
+            if (data.tires) {
+              console.log('[Autosync] Tires found:', data.tires);
+            } else {
+              console.log('[Autosync] No tires in selection data');
+            }
           }
-          handleBuyClick();
-        }
-      },
-    });
+          
+          // When user submits quote OR clicks BUY, show payment selection
+          if (event === 'submitQuote' || event === 'buy' || event === 'buyClick' || event === 'addToCart') {
+            console.log('[Autosync] Quote/BUY event detected - showing payment selection');
+            // Use the data from the event or stored selection
+            if (data && (data.wheels || data.tires)) {
+              currentSelectionRef.current = data;
+            }
+            handleBuyClick();
+          }
+        },
+      });
 
-    setReady(true);
+      console.log('[Autosync] Autosync instance created successfully');
+      setReady(true);
+    } catch (error) {
+      console.error('[Autosync] Error initializing Autosync:', error);
+      toast.error('Failed to load visualizer. Please refresh the page.');
+    }
   }, [handleBuyClick]);
 
   // Inject pre-approval button inside the visualizer
@@ -303,7 +336,20 @@ export default function AutosyncLanding() {
 
   // In case the script is already cached and available quickly:
   useEffect(() => {
-    if (window.Autosync && !initialized.current) initAutosync();
+    const checkAndInit = () => {
+      if (window.Autosync && !initialized.current) {
+        console.log('[Autosync] Script already available, initializing...');
+        initAutosync();
+      }
+    };
+    
+    // Check immediately
+    checkAndInit();
+    
+    // Also check after a short delay in case script loads between renders
+    const timeout = setTimeout(checkAndInit, 1000);
+    
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
