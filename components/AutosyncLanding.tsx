@@ -266,66 +266,6 @@ export default function AutosyncLanding() {
     }
   }, [handleBuyClick]);
 
-  // Inject pre-approval button inside the visualizer
-  const injectPreApprovalButton = useCallback(() => {
-    const container = document.getElementById(AUTOSYNC_CONTAINER_ID);
-    if (!container) return;
-
-    // Check if button already exists
-    if (container.querySelector('.autosync-preapproval-btn')) return;
-
-    // Create button element
-    const button = document.createElement('button');
-    button.className = 'autosync-preapproval-btn';
-    button.style.cssText = `
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 9999;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      background: linear-gradient(to bottom right, #dc2626, #b91c1c, #991b1b);
-      border-radius: 0.5rem;
-      padding: 12px 16px;
-      border: 0;
-      color: white;
-      font-weight: bold;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-width: 180px;
-    `;
-    button.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="width: 24px; height: 24px; background: rgba(255, 255, 255, 0.2); border-radius: 9999px; display: flex; align-items: center; justify-content: center;">
-          <span style="color: white; font-weight: bold; font-size: 14px;">AS</span>
-        </div>
-        <span style="font-size: 14px;">See if You Pre-Qualify</span>
-      </div>
-      <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9); font-weight: normal;">
-        Multiple Providers • Regardless of Credit
-      </span>
-    `;
-    button.onmouseenter = () => {
-      button.style.transform = 'scale(1.05)';
-      button.style.boxShadow = '0 25px 50px -12px rgba(220, 38, 38, 0.5)';
-    };
-    button.onmouseleave = () => {
-      button.style.transform = 'scale(1)';
-      button.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
-    };
-    button.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setPreApprovalOpen(true);
-    };
-
-    // Append to visualizer container
-    container.appendChild(button);
-    console.log('[Autosync] Pre-approval button injected successfully');
-  }, [setPreApprovalOpen]);
 
   // Removed button interception - let Autosync work naturally
   // This function is now a no-op placeholder
@@ -353,24 +293,6 @@ export default function AutosyncLanding() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Inject pre-approval button when visualizer becomes ready
-  useEffect(() => {
-    if (ready) {
-      console.log('[Autosync] Visualizer ready, injecting pre-approval button...');
-      const timer1 = setTimeout(() => {
-        console.log('[Autosync] Injecting pre-approval button (1s delay)');
-        try {
-          injectPreApprovalButton();
-        } catch (error) {
-          console.error('[Autosync] Error injecting pre-approval button:', error);
-        }
-      }, 1000);
-      
-      return () => {
-        clearTimeout(timer1);
-      };
-    }
-  }, [ready, injectPreApprovalButton]);
 
 
   return (
