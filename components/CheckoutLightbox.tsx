@@ -153,10 +153,16 @@ export default function CheckoutLightbox({
   };
 
   const startFinancing = async () => {
+    // Prevent multiple simultaneous launches
+    if (isSubmitting || launchURL) {
+      console.log('[Checkout] Already submitting or URL exists, skipping');
+      return;
+    }
+
     console.log('[Checkout] Starting financing flow...');
     console.log('[Checkout] Shipping info:', shippingInfo);
     console.log('[Checkout] Cart data:', cartData);
-    
+
     setIsSubmitting(true);
     try {
       // Format phone number to required format (555-123-4567)
@@ -767,14 +773,15 @@ export default function CheckoutLightbox({
                       </div>
                     </div>
                   ) : (
-                    <iframe 
+                    <iframe
                       src={launchURL}
                       className="w-full h-full relative z-10 bg-white"
-                      title="Autosync Financing Application"
-                      onLoad={(e) => {
-                        (e.target as HTMLIFrameElement).style.opacity = '1';
+                      title="LendPro Financing Application"
+                      allow="payment; geolocation"
+                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                      onError={() => {
+                        console.error('[Checkout] Iframe failed to load');
                       }}
-                      style={{ opacity: 0, transition: 'opacity 0.5s ease-in-out' }}
                     />
                   )}
                 </div>
