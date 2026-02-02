@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-const AUTOSYNC_KEY = `RNR_2026`;
+const AUTOSYNC_KEY = "RNR_2026";
 const AUTOSYNC_CONTAINER_ID = "autosync-visualizer";
 
 export default function AutosyncLanding() {
