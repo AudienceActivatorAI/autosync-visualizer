@@ -93,9 +93,12 @@ export default function AutosyncLanding() {
           totalAmount += price * quantity;
 
           // Use Autosync's wheel image properties (img001 is the primary image)
+          console.log('[Autosync] Checking wheel.img001:', wheel.img001);
+          console.log('[Autosync] Checking wheel.img002:', wheel.img002);
+          console.log('[Autosync] Checking wheel.img003:', wheel.img003);
           const wheelImage = wheel.img001 || wheel.img002 || wheel.img003 || '';
 
-          console.log('[Autosync] Wheel image URL:', wheelImage, 'for wheel:', wheel.partNumber);
+          console.log('[Autosync] Final wheel image URL:', wheelImage, 'for wheel:', wheel.partNumber);
 
           products.push({
             id: `wheel-${wheel.partNumber}`,
