@@ -242,7 +242,7 @@ export default function CheckoutLightbox({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 lg:p-6">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-md transition-all duration-300"
@@ -250,7 +250,7 @@ export default function CheckoutLightbox({
       />
 
       {/* Main Modal Container */}
-      <div className="relative w-full max-w-5xl h-[90vh] max-h-[800px] bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-5xl h-[100vh] md:h-[90vh] max-h-none md:max-h-[800px] bg-white border border-gray-200 shadow-2xl rounded-none md:rounded-lg overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-300">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -262,7 +262,7 @@ export default function CheckoutLightbox({
         {/* Left Panel: Order Summary */}
         <div
           className={`w-full md:w-1/3 bg-gray-50 border-r border-gray-200 flex flex-col ${
-            step === "financing" ? "hidden md:flex" : "flex"
+            step === "shipping" || step === "financing" ? "hidden md:flex" : "flex"
           }`}
         >
           <div className="p-6 border-b border-gray-200">
@@ -342,7 +342,7 @@ export default function CheckoutLightbox({
         {/* Right Panel: Checkout Steps */}
         <div className="flex-1 flex flex-col bg-white relative overflow-hidden">
           {/* Header Progress */}
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="p-4 md:p-6 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               {step !== "summary" && (
                 <Button
@@ -389,7 +389,7 @@ export default function CheckoutLightbox({
           </div>
 
           {/* Content Area */}
-          <div ref={contentAreaRef} className="flex-1 p-6 overflow-y-auto">
+          <div ref={contentAreaRef} className="flex-1 p-4 md:p-6 overflow-y-auto">
             {step === "summary" && (
               <div className="h-full flex flex-col justify-center items-center space-y-8 animate-in slide-in-from-right-10 duration-300">
                 <div className="text-center space-y-2 max-w-md">
@@ -423,7 +423,7 @@ export default function CheckoutLightbox({
             )}
 
             {step === "shipping" && (
-              <div className="space-y-6 max-w-2xl mx-auto animate-in slide-in-from-right-10 duration-300">
+              <div className="space-y-4 md:space-y-6 max-w-2xl mx-auto animate-in slide-in-from-right-10 duration-300">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName" className="text-gray-900">
@@ -618,7 +618,7 @@ export default function CheckoutLightbox({
 
                 <Button
                   size="lg"
-                  className="w-full mt-8 font-bold text-lg bg-red-600 hover:bg-red-600/90"
+                  className="w-full mt-4 md:mt-8 font-bold text-lg bg-red-600 hover:bg-red-600/90"
                   onClick={handleNext}
                 >
                   CONTINUE TO PAYMENT
