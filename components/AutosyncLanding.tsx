@@ -88,15 +88,17 @@ export default function AutosyncLanding() {
       if (data.wheels && Array.isArray(data.wheels)) {
         for (const wheel of data.wheels) {
           console.log('[Autosync] Full wheel object:', wheel);
+          console.log('[Autosync] Object keys:', Object.keys(wheel));
           const price = await apiService.getProductPrice(wheel.partNumber, 'wheel');
           const quantity = wheel.quantity || 4;
           totalAmount += price * quantity;
 
           // Use Autosync's wheel image properties (img001 is the primary image)
-          console.log('[Autosync] Checking wheel.img001:', wheel.img001);
-          console.log('[Autosync] Checking wheel.img002:', wheel.img002);
-          console.log('[Autosync] Checking wheel.img003:', wheel.img003);
-          const wheelImage = wheel.img001 || wheel.img002 || wheel.img003 || '';
+          // Try both dot notation and bracket notation
+          console.log('[Autosync] wheel.img001:', wheel.img001);
+          console.log('[Autosync] wheel["img001"]:', wheel["img001"]);
+          console.log('[Autosync] Has img001 property:', 'img001' in wheel);
+          const wheelImage = wheel["img001"] || wheel.img001 || wheel["img002"] || wheel.img002 || wheel["img003"] || wheel.img003 || '';
 
           console.log('[Autosync] Final wheel image URL:', wheelImage, 'for wheel:', wheel.partNumber);
 
